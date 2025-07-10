@@ -1,169 +1,148 @@
 "<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Influencers da Matemática</title>
-    <style>
-        body { font-family: 'Arial', sans-serif; background: #000; color: #fff; margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .container { width: 360px; height: 640px; background: #111; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px; box-shadow: 0px 0px 20px rgba(255,255,255,0.1); position: relative; }
-        button { padding: 10px 20px; margin-top: 10px; border: none; background: #FF2D55; color: white; border-radius: 30px; font-weight: bold; cursor: pointer; }
-        button:hover { background: #e60039; }
-        #question, #options, #timer, #likes, #message { margin-top: 10px; text-align: center; }
-        #likes { font-size: 18px; margin-top: 10px; }
-        #timer { position: absolute; top: 20px; right: 20px; background: #333; padding: 5px 15px; border-radius: 20px; }
-        input[type="text"] { padding: 10px; border-radius: 20px; border: none; margin-top: 10px; width: 80%; text-align: center; }
-    </style>
+  <meta charset="UTF-8">
+  <title>O Bolo Perfeito</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fff3e0;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #6d4c41;
+    }
+    #game {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff8e1;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    #ingrediente-img {
+      max-width: 200px;
+      margin: 20px 0;
+    }
+    .btn {
+      display: block;
+      margin: 10px auto;
+      padding: 15px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ffcc80;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #pergunta {
+    text-transform: uppercase;
+    }
+    .btn:hover {
+      background-color: #ffb74d;
+    }
+    #final {
+      display: none;
+    }
+    #bolo {
+      width: 300px;
+      margin: 20px auto;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="game">
-            <div id="intro">
-                <h1>Influencers da Matemática 🚀</h1>
-                <p>Ganhe milhões de seguidores resolvendo porcentagens!</p>
-                <button onclick="startGame('easy')">Nivel Fácil</button>
-                <button onclick="startGame('medium')">Nivel Intermediário</button>
-                <button onclick="startGame('hard')">Mestre do Universo</button>
-            </div>
-            <div id="playArea" style="display:none; width:100%;">
-                <div id="timer"></div>
-                <div id="likes">Likes: 0</div>
-                <div id="question"></div>
-                <div id="options"></div>
-                <div id="message"></div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        let levels = ['easy', 'medium', 'hard'];
-        let levelNames = { easy: 'Nivel Fácil', medium: 'Nivel Intermediário', hard: 'Mestre do Universo' };
+  <h1>🎂 O Bolo Perfeito 🎂</h1>
 
-        function generateRandomPercentageQuestion(min, max, level) {
-            let base, percent, answer;
-            if (level === 'easy') {
-                base = Math.floor(Math.random() * (max - min + 1)) + min;
-                base = base % 5 === 0 ? base : base + (5 - base % 5);
-                percent = [5, 10, 15, 20, 25, 30][Math.floor(Math.random() * 6)];
-            } else if (level === 'medium') {
-                base = Math.floor(Math.random() * (max - min + 1)) + min;
-                percent = [12, 17, 22, 30, 35, 40][Math.floor(Math.random() * 6)];
-            } else {
-                base = Math.floor(Math.random() * (max - min + 1)) + min;
-                percent = [18, 25, 40, 50, 60, 70][Math.floor(Math.random() * 6)];
-            }
-            answer = Math.round((percent / 100) * base);
-            return { q: `Quantos são ${percent}% de ${base}?`, a: `${answer}` };
+  <div id="game">
+    <h2 id="fase"></h2>
+    <img id="ingrediente-img" src="" alt="Ingrediente">
+    <p id="pergunta"></p>
+    <button class="btn" id="btn0" onclick="verificarResposta(0)"></button>
+    <button class="btn" id="btn1" onclick="verificarResposta(1)"></button>
+  </div>
+
+  <div id="final">
+    <h2>🎉 Parabéns, Chef! 🎉</h2>
+    <p>Você completou a receita e fez O BOLO PERFEITO!</p>
+    <img id="bolo" src="https://images.vexels.com/media/users/3/299593/isolated/preview/4a65ab66435d54b673063bfab7fac471-bolo-de-chocolate-kawaii.png" alt="Bolo pronto">
+  </div>
+
+  <script>
+    const fases = [
+      {
+        ingrediente: "Ovos",
+        pergunta: "A receita precisa de 3 ovos. Você já colocou 1. Quantos faltam?",
+        opcoes: ["1 ovo", "2 ovos"],
+        correta: 1,
+        imagem: "https://st2.depositphotos.com/3923211/6208/v/450/depositphotos_62083861-stock-illustration-eggs-with-broken-egg-and.jpg" // Imagem substituída genérica por causa do link não direto
+      },
+      {
+        ingrediente: "Leite",
+        pergunta: "A receita pede 200 ml de leite. Você já colocou 120 ml. Quanto ainda falta?",
+        opcoes: ["60 ml", "80 ml"],
+        correta: 1,
+        imagem: "https://st2.depositphotos.com/1109793/9585/v/950/depositphotos_95856604-stock-illustration-milk-doodle-illustration-design.jpg"
+      },
+      {
+        ingrediente: "Chocolate em pó",
+        pergunta: "Você já colocou 40g de chocolate. Quanto falta para completar 100g?",
+        opcoes: ["70g", "60g"],
+        correta: 1,
+        imagem: "https://thumbs.dreamstime.com/b/desenho-animado-cacau-chocolate-em-pó-café-molhado-um-vidro-metálico-para-cardápios-marketing-design-cookbook-vendedores-de-245756794.jpg"
+      },
+      {
+        ingrediente: "Margarina",
+        pergunta: "Cada tablete de margarina tem 100g. Quantos tabletes você precisa para ter 200g?",
+        opcoes: ["3 tabletes", "2 tabletes"],
+        correta: 1,
+        imagem: "https://media.istockphoto.com/id/1362717505/pt/vetorial/milk-product-natural-ingredient-butter-or-margarine-icon-concept-cartoon-organic-dairy.jpg?s=612x612&w=0&k=20&c=kvfqcgs3KTB3bnoE1mVIMT-OZQxiVrfqPTUVI0pww7M="
+      },
+      {
+        ingrediente: "Açúcar",
+        pergunta: "A receita pede 150g de açúcar. Você já colocou 90g. Quanto falta?",
+        opcoes: ["60g", "40g"],
+        correta: 0,
+        imagem: "https://st2.depositphotos.com/1742172/10193/v/950/depositphotos_101937314-stock-illustration-cartoon-sugar-bowl.jpg"
+      },
+      {
+        ingrediente: "Fermento",
+        pergunta: "Cada colher de fermento tem 5g. Quantas colheres você precisa para ter 15g?",
+        opcoes: ["3 colheres", "2 colheres"],
+        correta: 0,
+        imagem: "https://thumbs.dreamstime.com/z/saco-de-fermento-em-pó-84076456.jpg"
+      }
+    ];
+
+    let faseAtual = 0;
+
+    function mostrarFase() {
+      const fase = fases[faseAtual];
+      document.getElementById("fase").textContent = `Ingrediente: ${fase.ingrediente}`;
+      document.getElementById("pergunta").textContent = fase.pergunta;
+      document.getElementById("btn0").textContent = fase.opcoes[0];
+      document.getElementById("btn1").textContent = fase.opcoes[1];
+      document.getElementById("ingrediente-img").src = fase.imagem;
+    }
+
+    function verificarResposta(resposta) {
+      if (resposta === fases[faseAtual].correta) {
+        faseAtual++;
+        if (faseAtual < fases.length) {
+          mostrarFase();
+        } else {
+          document.getElementById("game").style.display = "none";
+          document.getElementById("final").style.display = "block";
         }
+      } else {
+        alert("Ops! Essa não é a resposta certa. Tente novamente!");
+      }
+    }
 
-        let currentLevelIndex = 0;
-        let questionPool = [];
-        let currentQuestion = 0;
-        let likes = 0;
-        let timer;
-        let timeLeft = 40;
-        let streak = 0;
+    // Iniciar o jogo
+    mostrarFase();
+  </script>
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function startGame(level) {
-            currentLevelIndex = levels.indexOf(level);
-            likes = 0;
-            streak = 0;
-            document.getElementById('intro').style.display = 'none';
-            document.getElementById('playArea').style.display = 'block';
-            loadLevel();
-        }
-
-        function loadLevel() {
-            let level = levels[currentLevelIndex];
-            alert(`🆕 Iniciando: ${levelNames[level]}`);
-            let min = level === 'easy' ? 100 : level === 'medium' ? 500 : 1000;
-            let max = level === 'easy' ? 500 : level === 'medium' ? 1000 : 2000;
-            questionPool = shuffle(Array.from({ length: 5 }, () => generateRandomPercentageQuestion(min, max, level)));
-            currentQuestion = 0;
-            nextQuestion();
-        }
-
-        function nextQuestion() {
-            if (currentQuestion >= questionPool.length) {
-                currentLevelIndex++;
-                if (currentLevelIndex < levels.length) {
-                    setTimeout(loadLevel, 500);
-                } else {
-                    endGame();
-                }
-                return;
-            }
-
-            let q = questionPool[currentQuestion];
-            document.getElementById('question').innerHTML = `<h2>${q.q}</h2>`;
-            document.getElementById('message').innerHTML = "";
-            document.getElementById('options').innerHTML = `
-                <input type="text" id="answer" placeholder="Digite sua resposta">
-                <br>
-                <button onclick="checkAnswer()">Responder</button>
-            `;
-            timeLeft = 40;
-            document.getElementById('timer').innerHTML = `⏰ ${timeLeft}s`;
-            clearInterval(timer);
-            timer = setInterval(countdown, 1000);
-        }
-
-        function countdown() {
-            timeLeft--;
-            document.getElementById('timer').innerHTML = `⏰ ${timeLeft}s`;
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                loseLike("Tempo esgotado!");
-            }
-        }
-
-        function checkAnswer() {
-            let playerAnswer = document.getElementById('answer').value.trim();
-            let correctAnswer = questionPool[currentQuestion].a;
-            if (playerAnswer === correctAnswer) {
-                streak++;
-                let bonus = streak > 1 ? 1000 : 0;
-                let gained = 2000 + bonus;
-                likes += gained;
-                document.getElementById('message').innerHTML = `🎉 Acertou! Ganhou ${gained} seguidores${bonus ? " (incluindo bônus!)" : ""}`;
-            } else {
-                streak = 0;
-                likes -= 2000;
-                document.getElementById('message').innerHTML = "😢 Errou! Perdeu 2000 seguidores.";
-            }
-            document.getElementById('likes').innerHTML = `Likes: ${likes}`;
-            clearInterval(timer);
-            currentQuestion++;
-            setTimeout(nextQuestion, 2000);
-        }
-
-        function loseLike(msg) {
-            streak = 0;
-            likes -= 2000;
-            document.getElementById('message').innerHTML = `😢 ${msg} Perdeu 2000 seguidores.`;
-            document.getElementById('likes').innerHTML = `Likes: ${likes}`;
-            currentQuestion++;
-            setTimeout(nextQuestion, 2000);
-        }
-
-        function endGame() {
-            document.getElementById('question').innerHTML = `<h2>🏆 Você se tornou um Super Influencer da Matemática! 🏆</h2>`;
-            document.getElementById('options').innerHTML = `<p>Total de seguidores conquistados: ${likes}</p><button onclick='restartGame()'>Jogar novamente</button>`;
-            document.getElementById('message').innerHTML = "✨ Parabéns pela sua jornada brilhante! ✨";
-            clearInterval(timer);
-        }
-
-        function restartGame() {
-            document.getElementById('playArea').style.display = 'none';
-            document.getElementById('intro').style.display = 'block';
-        }
-    </script>
 </body>
 </html>"
