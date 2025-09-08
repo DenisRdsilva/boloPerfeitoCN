@@ -1,148 +1,22 @@
-"<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>O Bolo Perfeito</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #fff3e0;
-      text-align: center;
-      padding: 40px;
-    }
-    h1 {
-      color: #6d4c41;
-    }
-    #game {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff8e1;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    #ingrediente-img {
-      max-width: 200px;
-      margin: 20px 0;
-    }
-    .btn {
-      display: block;
-      margin: 10px auto;
-      padding: 15px 25px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: #ffcc80;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    #pergunta {
-    text-transform: uppercase;
-    }
-    .btn:hover {
-      background-color: #ffb74d;
-    }
-    #final {
-      display: none;
-    }
-    #bolo {
-      width: 300px;
-      margin: 20px auto;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+  <div class="menu">
+    <h1 class="menu-title">🎂 O Bolo Perfeito 🎂</h1>
+    <img id="ingrediente-img" src="https://images.vexels.com/media/users/3/299593/isolated/preview/4a65ab66435d54b673063bfab7fac471-bolo-de-chocolate-kawaii.png"
+            alt="Bolo pronto">
 
-  <h1>🎂 O Bolo Perfeito 🎂</h1>
-
-  <div id="game">
-    <h2 id="fase"></h2>
-    <img id="ingrediente-img" src="" alt="Ingrediente">
-    <p id="pergunta"></p>
-    <button class="btn" id="btn0" onclick="verificarResposta(0)"></button>
-    <button class="btn" id="btn1" onclick="verificarResposta(1)"></button>
+    <a href="./main.html">INICIAR</a>
+    <a href="./credits.html">CRÉDITOS</a>
   </div>
-
-  <div id="final">
-    <h2>🎉 Parabéns, Chef! 🎉</h2>
-    <p>Você completou a receita e fez O BOLO PERFEITO!</p>
-    <img id="bolo" src="https://images.vexels.com/media/users/3/299593/isolated/preview/4a65ab66435d54b673063bfab7fac471-bolo-de-chocolate-kawaii.png" alt="Bolo pronto">
-  </div>
-
-  <script>
-    const fases = [
-      {
-        ingrediente: "Ovos",
-        pergunta: "A receita precisa de 3 ovos. Você já colocou 1. Quantos faltam?",
-        opcoes: ["1 ovo", "2 ovos"],
-        correta: 1,
-        imagem: "https://st2.depositphotos.com/3923211/6208/v/450/depositphotos_62083861-stock-illustration-eggs-with-broken-egg-and.jpg" // Imagem substituída genérica por causa do link não direto
-      },
-      {
-        ingrediente: "Leite",
-        pergunta: "A receita pede 200 ml de leite. Você já colocou 120 ml. Quanto ainda falta?",
-        opcoes: ["60 ml", "80 ml"],
-        correta: 1,
-        imagem: "https://st2.depositphotos.com/1109793/9585/v/950/depositphotos_95856604-stock-illustration-milk-doodle-illustration-design.jpg"
-      },
-      {
-        ingrediente: "Chocolate em pó",
-        pergunta: "Você já colocou 40g de chocolate. Quanto falta para completar 100g?",
-        opcoes: ["70g", "60g"],
-        correta: 1,
-        imagem: "https://thumbs.dreamstime.com/b/desenho-animado-cacau-chocolate-em-pó-café-molhado-um-vidro-metálico-para-cardápios-marketing-design-cookbook-vendedores-de-245756794.jpg"
-      },
-      {
-        ingrediente: "Margarina",
-        pergunta: "Cada tablete de margarina tem 100g. Quantos tabletes você precisa para ter 200g?",
-        opcoes: ["3 tabletes", "2 tabletes"],
-        correta: 1,
-        imagem: "https://media.istockphoto.com/id/1362717505/pt/vetorial/milk-product-natural-ingredient-butter-or-margarine-icon-concept-cartoon-organic-dairy.jpg?s=612x612&w=0&k=20&c=kvfqcgs3KTB3bnoE1mVIMT-OZQxiVrfqPTUVI0pww7M="
-      },
-      {
-        ingrediente: "Açúcar",
-        pergunta: "A receita pede 150g de açúcar. Você já colocou 90g. Quanto falta?",
-        opcoes: ["60g", "40g"],
-        correta: 0,
-        imagem: "https://st2.depositphotos.com/1742172/10193/v/950/depositphotos_101937314-stock-illustration-cartoon-sugar-bowl.jpg"
-      },
-      {
-        ingrediente: "Fermento",
-        pergunta: "Cada colher de fermento tem 5g. Quantas colheres você precisa para ter 15g?",
-        opcoes: ["3 colheres", "2 colheres"],
-        correta: 0,
-        imagem: "https://thumbs.dreamstime.com/z/saco-de-fermento-em-pó-84076456.jpg"
-      }
-    ];
-
-    let faseAtual = 0;
-
-    function mostrarFase() {
-      const fase = fases[faseAtual];
-      document.getElementById("fase").textContent = `Ingrediente: ${fase.ingrediente}`;
-      document.getElementById("pergunta").textContent = fase.pergunta;
-      document.getElementById("btn0").textContent = fase.opcoes[0];
-      document.getElementById("btn1").textContent = fase.opcoes[1];
-      document.getElementById("ingrediente-img").src = fase.imagem;
-    }
-
-    function verificarResposta(resposta) {
-      if (resposta === fases[faseAtual].correta) {
-        faseAtual++;
-        if (faseAtual < fases.length) {
-          mostrarFase();
-        } else {
-          document.getElementById("game").style.display = "none";
-          document.getElementById("final").style.display = "block";
-        }
-      } else {
-        alert("Ops! Essa não é a resposta certa. Tente novamente!");
-      }
-    }
-
-    // Iniciar o jogo
-    mostrarFase();
-  </script>
 
 </body>
-</html>"
+
+</html>

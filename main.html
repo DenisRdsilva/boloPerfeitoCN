@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>O Bolo Perfeito</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>🎂 O Bolo Perfeito 🎂</h1>
+
+    <div id="game">
+        <h2 id="tipo-bolo"></h2>
+        <h2 id="fase"></h2>
+        <p id="pergunta"></p>
+        <img id="ingrediente-img" src="" alt="Ingrediente">
+        <button class="btn" id="btn0" onclick="verificarResposta(0)"></button>
+        <button class="btn" id="btn1" onclick="verificarResposta(1)"></button>
+    </div>
+
+    <div id="final" style="display:none;">
+        <h2>🎉 Parabéns, Chef! 🎉</h2>
+        <p>Você completou a receita e fez O BOLO PERFEITO!</p>
+        <img src="https://images.vexels.com/media/users/3/299593/isolated/preview/4a65ab66435d54b673063bfab7fac471-bolo-de-chocolate-kawaii.png"
+            alt="Bolo pronto">
+        <a class="btn" href="./index.html">Voltar ao menu</a>
+        <a class="btn" href="./main.html">Reiniciar</a>
+    </div>
+
+    <script>
+        // Banco de receitas com imagens dos ingredientes
+        const receitas = [
+            {
+                nome: "Bolo de Chocolate",
+                ingredientes: [
+                    { nome: "Ovos", quantidade: 3, unidade: "unidades", imagem: "./assets/ovos.png" },
+                    { nome: "Farinha", quantidade: 240, unidade: "g", imagem: "./assets/farinha.png" },
+                    { nome: "Açúcar", quantidade: 270, unidade: "g", imagem: "./assets/acucar.png" },
+                    { nome: "Manteiga", quantidade: 100, unidade: "g", imagem: "./assets/manteiga.png" },
+                    { nome: "Leite", quantidade: 200, unidade: "ml", imagem: "./assets/leite.png" },
+                    { nome: "Chocolate em pó", quantidade: 100, unidade: "g", imagem: "./assets/chocolate.png" },
+                ]
+            },
+            {
+                nome: "Bolo de Laranja",
+                ingredientes: [
+                    { nome: "Ovos", quantidade: 3, unidade: "unidades", imagem: "./assets/ovos.png" },
+                    { nome: "Farinha", quantidade: 240, unidade: "g", imagem: "./assets/farinha.png" },
+                    { nome: "Açúcar", quantidade: 270, unidade: "g", imagem: "./assets/acucar.png" },
+                    { nome: "Óleo", quantidade: 100, unidade: "ml", imagem: "./assets/oleo.png" },
+                    { nome: "Suco de laranja", quantidade: 200, unidade: "ml", imagem: "./assets/laranja.png" },
+                    { nome: "Fermento", quantidade: 15, unidade: "g", imagem: "./assets/fermento.png" },
+                ]
+            },
+            {
+                nome: "Bolo de Milho",
+                ingredientes: [
+                    { nome: "Ovos", quantidade: 3, unidade: "unidades", imagem: "./assets/ovos.png" },
+                    { nome: "Milho", quantidade: 200, unidade: "g", imagem: "./assets/milho.png" },
+                    { nome: "Açúcar", quantidade: 180, unidade: "g", imagem: "./assets/acucar.png" },
+                    { nome: "Óleo", quantidade: 100, unidade: "ml", imagem: "./assets/oleo.png" },
+                    { nome: "Leite", quantidade: 200, unidade: "ml", imagem: "./assets/leite.png" },
+                    { nome: "Fubá", quantidade: 120, unidade: "g", imagem: "./assets/fuba.png" },
+                ]
+            },
+            {
+                nome: "Bolo de Fubá Cremoso",
+                ingredientes: [
+                    { nome: "Ovos", quantidade: 3, unidade: "unidades", imagem: "./assets/ovos.png" },
+                    { nome: "Açúcar", quantidade: 360, unidade: "g", imagem: "./assets/acucar.png" },
+                    { nome: "Manteiga", quantidade: 40, unidade: "g", imagem: "./assets/manteiga.png" },
+                    { nome: "Leite", quantidade: 400, unidade: "ml", imagem: "./assets/leite.png" },
+                    { nome: "Fubá", quantidade: 120, unidade: "g", imagem: "./assets/fuba.png" },
+                    { nome: "Farinha", quantidade: 60, unidade: "g", imagem: "./assets/farinha.png" },
+                ]
+            },
+            {
+                nome: "Bolo de Banana",
+                ingredientes: [
+                    { nome: "Ovos", quantidade: 3, unidade: "unidades", imagem: "./assets/ovos.png" },
+                    { nome: "Farinha", quantidade: 240, unidade: "g", imagem: "./assets/farinha.png" },
+                    { nome: "Açúcar", quantidade: 270, unidade: "g", imagem: "./assets/acucar.png" },
+                    { nome: "Óleo", quantidade: 100, unidade: "ml", imagem: "./assets/oleo.png" },
+                    { nome: "Bananas", quantidade: 400, unidade: "g", imagem: "./assets/banana.png" },
+                    { nome: "Fermento", quantidade: 15, unidade: "g", imagem: "./assets/manteiga.png" },
+                ]
+            }
+        ];
+
+        // Sorteia uma receita
+        const receita = receitas[Math.floor(Math.random() * receitas.length)];
+        document.getElementById("tipo-bolo").textContent = receita.nome;
+
+        let faseAtual = 0;
+
+        // ajuda: inteiro entre min e max (inclusive)
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // formata singular/plural de "unidades"
+        function formatValor(valor, unidade) {
+            if (unidade === "unidades") return `${valor} ${valor === 1 ? "unidade" : "unidades"}`;
+            return `${valor} ${unidade}`;
+        }
+
+        function gerarPergunta(ingrediente) {
+            const total = ingrediente.quantidade;
+            const unidade = ingrediente.unidade;
+
+            // 1) Já colocado: pelo menos 1 e menor que o total
+            let colocado;
+            if (unidade === "unidades") {
+                // ex.: ovos -> 1..(total-1)
+                colocado = randInt(1, Math.max(1, total - 1));
+            } else {
+                // para g/ml, usa passos "bonitos" (10). Ajusta para não ultrapassar.
+                const step = (unidade === "g" || unidade === "ml") ? 10 : 1;
+                const maxK = Math.max(1, Math.floor((total - 1) / step));
+                colocado = randInt(1, maxK) * step;
+                if (colocado >= total) colocado = Math.max(1, total - step);
+            }
+
+            const falta = total - colocado; // garantido: 1..(total-1)
+
+            // 2) Opção errada: sempre entre 1 e total-1 e diferente da correta
+            let errado;
+            if (unidade === "unidades") {
+                do { errado = randInt(1, total - 1); } while (errado === falta);
+            } else {
+                const step = (unidade === "g" || unidade === "ml") ? 10 : 1;
+                const maxK = Math.max(1, Math.floor((total - 1) / step));
+                do { errado = randInt(1, maxK) * step; } while (errado === falta);
+            }
+
+            // monta opções e embaralha
+            let opcoes = [
+                formatValor(falta, unidade),
+                formatValor(errado, unidade)
+            ];
+            if (Math.random() < 0.5) opcoes.reverse();
+
+            return {
+                pergunta: `A receita pede ${formatValor(total, unidade)} de ${ingrediente.nome}. ` +
+                    `Você já colocou ${formatValor(colocado, unidade)}. ` +
+                    `Quanto falta?`,
+                opcoes,
+                correta: formatValor(falta, unidade)
+            };
+        }
+
+        function mostrarFase() {
+            const ingrediente = receita.ingredientes[faseAtual];
+            const fase = gerarPergunta(ingrediente);
+
+            document.getElementById("fase").textContent = `Ingrediente: ${ingrediente.nome}`;
+            document.getElementById("pergunta").textContent = fase.pergunta;
+            document.getElementById("ingrediente-img").src = ingrediente.imagem;
+
+            document.getElementById("btn0").textContent = fase.opcoes[0];
+            document.getElementById("btn1").textContent = fase.opcoes[1];
+
+            document.getElementById("btn0").style.display = "inline-block";
+            document.getElementById("btn1").style.display = "inline-block";
+
+            document.getElementById("btn0").dataset.correta = (fase.opcoes[0] === fase.correta);
+            document.getElementById("btn1").dataset.correta = (fase.opcoes[1] === fase.correta);
+        }
+
+        function verificarResposta(botao) {
+            const btn = document.getElementById("btn" + botao);
+
+            if (btn.dataset.correta === "true") {
+                faseAtual++;
+                if (faseAtual < receita.ingredientes.length) {
+                    mostrarFase();
+                } else {
+                    document.getElementById("game").style.display = "none";
+                    document.getElementById("final").style.display = "block";
+                }
+            } else {
+                btn.style.display = "none"; // remove opção errada
+            }
+        }
+
+        // Inicia
+        mostrarFase();
+    </script>
+
+</body>
+
+</html>
