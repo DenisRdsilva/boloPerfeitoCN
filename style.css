@@ -131,6 +131,22 @@ a:hover {
   color: #3e2723;
 }
 
+.creditos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.creditos-img {
+    max-width: 500px;
+    padding: 20px 0;
+}
+
+.creditos-img {
+  max-width: 450px;
+}
+
 @media (max-width: 768px) {
   body {
     padding: 20px;
